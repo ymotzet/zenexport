@@ -33,6 +33,9 @@ uint32 count
 
 float64 data
 """,
+    "std_msgs/msg/Bool": """
+bool data
+""",
     "sensor_msgs/msg/Image": """
 # This message contains an uncompressed image
 # (0, 0) is at top-left corner of image

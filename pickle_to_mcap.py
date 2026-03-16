@@ -63,6 +63,10 @@ def write_to_mcap(output_file, data):
             "std_msgs/msg/Float64",
             schema_ros["std_msgs/msg/Float64"],
         )
+        schema_bool = writer.register_msgdef(
+            "std_msgs/msg/Bool",
+            schema_ros["std_msgs/msg/Bool"],
+        )
         schema_nav_sat_fix = writer.register_msgdef(
             "sensor_msgs/msg/NavSatFix",
             schema_ros["sensor_msgs/msg/NavSatFix"],
@@ -93,12 +97,71 @@ def write_to_mcap(output_file, data):
                     publish_time=ts,
                 )
 
-        # CAN — vehicle_speed: {host_ns: speed_kmh}
+        # CAN — vehicle_speed: {host_ns: speed_ms}
         for ts, speed in sorted(data["can"]["vehicle_speed"].items()):
             writer.write_message(
                 topic="/can/vehicle_speed",
                 schema=schema_float,
                 message={"data": float(speed)},
+                log_time=ts,
+                publish_time=ts,
+            )
+
+        # CAN — steering_angle: {host_ns: angle_rad}
+        for ts, angle in sorted(data["can"]["steering_angle"].items()):
+            writer.write_message(
+                topic="/can/steering_angle",
+                schema=schema_float,
+                message={"data": float(angle)},
+                log_time=ts,
+                publish_time=ts,
+            )
+
+        # CAN — vehicle_dynamics: {host_ns: {longitudinal_acceleration, lateral_acceleration, yaw_rate}}
+        for ts, dyn in sorted(data["can"]["vehicle_dynamics"].items()):
+            for field, topic in (
+                ("longitudinal_acceleration", "/can/longitudinal_acceleration"),
+                ("lateral_acceleration", "/can/lateral_acceleration"),
+                ("yaw_rate", "/can/yaw_rate"),
+            ):
+                writer.write_message(
+                    topic=topic,
+                    schema=schema_float,
+                    message={"data": float(dyn[field])},
+                    log_time=ts,
+                    publish_time=ts,
+                )
+
+        # CAN — turn_indicators: {host_ns: {turn_signal_left, turn_signal_right}}
+        for ts, ind in sorted(data["can"]["turn_indicators"].items()):
+            for field, topic in (
+                ("turn_signal_left", "/can/turn_signal_left"),
+                ("turn_signal_right", "/can/turn_signal_right"),
+            ):
+                writer.write_message(
+                    topic=topic,
+                    schema=schema_bool,
+                    message={"data": bool(ind[field])},
+                    log_time=ts,
+                    publish_time=ts,
+                )
+
+        # CAN — gear_position: {host_ns: gear}
+        for ts, gear in sorted(data["can"]["gear_position"].items()):
+            writer.write_message(
+                topic="/can/gear_position",
+                schema=schema_float,
+                message={"data": float(gear)},
+                log_time=ts,
+                publish_time=ts,
+            )
+
+        # CAN — accelerator_pedal: {host_ns: percent}
+        for ts, pedal in sorted(data["can"]["accelerator_pedal"].items()):
+            writer.write_message(
+                topic="/can/accelerator_pedal",
+                schema=schema_float,
+                message={"data": float(pedal)},
                 log_time=ts,
                 publish_time=ts,
             )
