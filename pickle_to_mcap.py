@@ -245,8 +245,8 @@ def write_to_mcap(output_file, data):
     return n_can + len(data["gnss"]) + len(data["camera"])
 
 
-pickle_path = "/mnt/zen-lager/CarLo_logs/2026-03-12_12-31-37/005/zenexport/005.pkl"
-output_path = "/mnt/zen-lager/CarLo_logs/2026-03-12_12-31-37/005/zenexport/005.mcap"
+pickle_path = "/mnt/zen-lager/CarLo_logs/2026-03-12_12-31-37/005/zenexport/ZenCarLo_2026-03-12_12-31-37_005.pkl"
+output_path = "/mnt/zen-lager/CarLo_logs/2026-03-12_12-31-37/005/zenexport/ZenCarLo_2026-03-12_12-31-37_005.mcap"
 
 with open(pickle_path, "rb") as f:
     data = pickle.load(f)

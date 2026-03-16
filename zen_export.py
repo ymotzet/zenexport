@@ -1,3 +1,4 @@
+import os
 import pickle
 import numpy as np
 from tqdm import tqdm
@@ -9,7 +10,6 @@ from zendar.io.zenplay import Zenplay
 
 
 # TODO read extrinsic calibration
-# TODO read vehicle name to proberly name file (timestamp is not sufficient!)
 # TODO read radar pointcloud from EPC
 
 
@@ -127,11 +127,16 @@ def read_all_data(zenplay):
 
 
 path = "/mnt/zen-lager/CarLo_logs/2026-03-12_12-31-37/005"
-pickle_path = "/mnt/zen-lager/CarLo_logs/2026-03-12_12-31-37/005/zenexport/005.pkl"
 
 zenplay = Zenplay(path)
-
+vehicle_name = zenplay._vehicle.name
 data = read_all_data(zenplay)
+
+segment = os.path.basename(path)
+timestamp = os.path.basename(os.path.dirname(path))
+output_dir = os.path.join(path, "zenexport")
+os.makedirs(output_dir, exist_ok=True)
+pickle_path = os.path.join(output_dir, f"{vehicle_name}_{timestamp}_{segment}.pkl")
 
 with open(pickle_path, "wb") as f:
     pickle.dump(data, f)
